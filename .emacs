@@ -45,7 +45,7 @@
 (setq show-paren-style 'mixed)
 
 ;; スタートアップ時のメッセージを抑制
-(setq Inhibit-Startup-message t)
+(setq inhibit-startup-message t)
 
 ;; バックアップしない
 (setq make-backup-files nil)
