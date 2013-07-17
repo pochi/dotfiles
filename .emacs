@@ -18,6 +18,11 @@
        )
        ))
 
+;; MacのCopy/Paste
+(setq x-select-enable-clipboard t)
+(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+
+
 ;; 日本語設定設定
 ;; http://d.hatena.ne.jp/SISY/searchdiary?word=*[emacs]
 (set-language-environment "Japanese")
@@ -40,7 +45,7 @@
 (setq show-paren-style 'mixed)
 
 ;; スタートアップ時のメッセージを抑制
-(setq inhibit-startup-message t)
+(setq Inhibit-Startup-message t)
 
 ;; バックアップしない
 (setq make-backup-files nil)
@@ -541,3 +546,8 @@
   (setq web-mode-java-offset   2)
   (setq web-mode-asp-offset    2))
 (add-hook 'web-mode-hook 'web-mode-hook)
+
+;;; Elixir
+(require 'elixir-mode)
+(add-to-list 'auto-mode-alist '("\\.elixir$"     . elixir-mode))
+
