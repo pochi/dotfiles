@@ -1,0 +1,10 @@
+/opt/local/repos/elixir/helloworld/README.md
+/opt/local/repos/elixir/helloworld/#README.md#
+/opt/local/repos/elixir/helloworld/web/templates/index.html.eex
+/opt/local/repos/elixir/helloworld/web/templates/#index.html.eex#
+/opt/local/repos/elixir/helloworld/priv/static/hoge.css
+/opt/local/repos/elixir/helloworld/priv/static/#hoge.css#
+/opt/local/repos/elixir/helloworld/web/templates/dynamo.html.eex
+/opt/local/repos/elixir/helloworld/web/templates/#dynamo.html.eex#
+/opt/local/repos/elixir/helloworld/web/routers/application_router.ex
+/opt/local/repos/elixir/helloworld/web/routers/#application_router.ex#

@@ -1,11 +1,8 @@
 EXTRA_DIST = \
 	hcal.rb \
 	howm2 \
-	tag2plan \
 	howmkara \
-	hsplit.rb \
-	howm-rast-register.rb \
-	howm-rast-search.rb
+	hsplit.rb
 
 ext_DATA = $(EXTRA_DIST)
 

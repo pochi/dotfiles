@@ -1,7 +1,7 @@
 ;;; howm-view.el --- Wiki-like note-taking tool
-;;; Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007, 2008
-;;;   by HIRAOKA Kazuyuki <khi@users.sourceforge.jp>
-;;; $Id: howm-view.el,v 1.235 2008-11-05 14:18:57 hira Exp $
+;;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012
+;;;   HIRAOKA Kazuyuki <khi@users.sourceforge.jp>
+;;; $Id: howm-view.el,v 1.246 2012-09-13 10:48:06 hira Exp $
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -30,8 +30,7 @@
 (defvar howm-view-summary-format
   (let* ((path (format-time-string howm-file-name-format))
          (width (length (file-name-nondirectory path))))
-    (concat "%-" (format "%s" width) "s " howm-view-summary-sep " ")))
-;;     (concat "%-" (format "%s" width) "s | ")))
+    (concat "%-" (format "%s" (1+ width)) "s" howm-view-summary-sep " ")))
 (defvar howm-view-header-format
   "\n==========================>>> %s\n"
   "Format string of header for howm-view-contents.
@@ -118,6 +117,7 @@
 (defalias 'howm-view-persistent-p  #'riffle-persistent-p)  
 (defalias 'howm-view-kill-buffer   #'riffle-kill-buffer)   
 (defalias 'howm-view-set-place     #'riffle-set-place)     
+(defalias 'howm-view-get-place     #'riffle-get-place)     
 (defalias 'howm-view-summary-current-item  #'riffle-summary-current-item)
 (defalias 'howm-view-contents-current-item #'riffle-contents-current-item)
 (defalias 'howm-view-summary-to-contents   #'riffle-summary-to-contents)
@@ -144,7 +144,8 @@
 (defvar howm-view-font-lock-silent t
   "Inhibit font-lock-verbose if non-nil.")
 (howm-defvar-risky howm-view-summary-font-lock-keywords
-  '(("^[^ \t\r\n]+ +" . howm-view-name-face)
+  `((,(concat "\\(^[^ \t\r\n].*\\)" (regexp-quote howm-view-summary-sep))
+     1 howm-view-name-face)
     ("^ +" . howm-view-empty-face)))
 (howm-defvar-risky howm-view-contents-font-lock-keywords nil)
 
@@ -565,19 +566,8 @@ But I'm not sure for multi-byte characters on other versions of emacsen."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; dir
 
-(defcustom howm-ruby-mode-bug nil
-  "Non nil if ruby-mode.el is old and has a bug around font-lock;
-global value of font-lock-keywords is set wrongly."
-  :type 'boolean
-  :group 'howm-experimental)
-
 (defun howm-view-directory (dir &optional recursive-p)
-  (howm-view-summary "" (howm-folder-items dir recursive-p))
-  (when howm-ruby-mode-bug
-    ;; sloppy!
-    ;; (for old ruby-mode.el which sets global value of font-lock-keywords)
-    (setq font-lock-keywords nil))
-  )
+  (howm-view-summary "" (howm-folder-items dir recursive-p)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; filter
@@ -665,10 +655,11 @@ global value of font-lock-keywords is set wrongly."
         (howm-view-remove-by-contents r)
       (howm-view-search-in-result r))))
 
-(defcustom howm-view-search-in-result-correctly nil
-  "*Non nil if search-in-result should be aware of paragraph."
-  :type 'boolean
-  :group 'howm-experimental)
+(howm-if-ver1dot3 nil
+  (defcustom howm-view-search-in-result-correctly t
+    "*Non nil if search-in-result should be aware of paragraph."
+    :type 'boolean
+    :group 'howm-search))
 
 (defun howm-view-search-in-result (regexp)
 ;;   (interactive "sSearch in result (grep): ")
@@ -686,19 +677,10 @@ global value of font-lock-keywords is set wrongly."
 
 (defun howm-view-remove-by-contents (regexp)
 ;;   (interactive "s(Reject) Search in result (grep): ")
-  (let* ((orig (howm-view-item-list))
-         (folder (howm-make-folder-from-items orig)))
-    (if howm-view-search-in-result-correctly
-        (let ((rejects (howm-view-search-folder-items regexp folder)))
-          (howm-view-summary-rebuild (howm-item-list-filter orig rejects t)))
-      ;; old code
-      (let ((rejects (howm-cl-remove-duplicates*
-                      (mapcar #'howm-item-name
-                              (howm-view-search-folder-items regexp folder)))))
-        (howm-view-summary-rebuild
-         (howm-cl-remove-if (lambda (item)
-                              (member (howm-item-name item) rejects))
-                            orig))))))
+  (let ((howm-v-r-b-c-regexp regexp))
+    (howm-view-sort/filter-doit
+     (lambda (item-list switch)
+       (howm-filter-items-by-contents item-list howm-v-r-b-c-regexp t)))))
 
 (defun howm-view-sort/filter-doit (proc &optional switch)
   (let ((kw font-lock-keywords))
@@ -810,6 +792,17 @@ global value of font-lock-keywords is set wrongly."
               (howm-view-string< cs ts))))
      item-list remove-p)))
 
+(defun howm-filter-items-by-contents (item-list regexp &optional remove-p)
+  (let* ((match (howm-view-search-folder-items-fi regexp item-list)))
+    (if howm-view-search-in-result-correctly
+        (howm-item-list-filter item-list match remove-p)
+      ;; old behavior
+      (let ((match-names (howm-cl-remove-duplicates*
+                          (mapcar #'howm-item-name match))))
+        (howm-filter-items (lambda (item)
+                             (member (howm-item-name item) match-names))
+                           item-list remove-p)))))
+
 (defun howm-view-file-name-format ()
   howm-file-name-format) ;; defined in howm-common.el
 
@@ -871,19 +864,20 @@ global value of font-lock-keywords is set wrongly."
        (t2 (format "Skip \"%s \" and \"[xxxx-xx-xx xx:xx]\""
                    howm-view-title-header))
        (r2 (format "\\(%s\\)\\|\\(^\\[[-: 0-9]+\\]\\)" r1)))
-  (defcustom howm-view-title-skip-regexp nil
-    "*Regular expression for lines which should not be titles.
+  (howm-if-ver1dot3 nil
+    (defcustom howm-view-title-skip-regexp r2
+      "*Regular expression for lines which should not be titles.
 If the original title matches this regexp, the first non-matched line
 is shown as title instead.
 Nil disables this feature.
 
 This feature does not work when `howm-view-search-in-result-correctly' is nil."
-    :type `(radio (const :tag "Off" nil)
-                  (const :tag ,t1 ,r1)
-                  (const :tag ,t2 ,r2)
-                  regexp)
-    ;;   :group 'howm-efficiency
-    :group 'howm-experimental))
+      :type `(radio (const :tag "Off" nil)
+                    (const :tag ,t1 ,r1)
+                    (const :tag ,t2 ,r2)
+                    regexp)
+      :group 'howm-title
+      :group 'howm-efficiency)))
 
 (defcustom howm-view-list-title-type 1
   "*Type of showing title in summary buffer.
@@ -918,8 +912,7 @@ to see file names."
     (howm-entitle-items-style2 title-regexp item-list)))
 
 (defun howm-entitle-items-style1 (title-regexp item-list)
-  (let* ((folder (howm-make-folder-from-items item-list))
-         (items (howm-view-search-folder-items title-regexp folder)))
+  (let ((items (howm-view-search-folder-items-fi title-regexp item-list)))
     (if howm-view-search-in-result-correctly
         (let* ((hit-items (howm-item-list-filter items item-list))
                (nohit-items (howm-item-list-filter item-list
@@ -928,7 +921,7 @@ to see file names."
                               hit-items
                             (append hit-items nohit-items))))
           (when howm-view-title-skip-regexp
-            (mapcar #'howm-view-change-title all-items))
+            (mapc #'howm-view-change-title all-items))
           all-items)
       (let* ((pages (howm-cl-remove-duplicates* (mapcar #'howm-item-page
                                                         item-list)))
@@ -1049,10 +1042,9 @@ list of items in ITEM-LIST which do not satisfy the above condition."
         (howm-cl-mapcan (lambda (item)
                           (if (howm-item-place item)
                               (list item)
-                            (let ((f (howm-make-folder-from-items (list item))))
-                              (or (howm-view-search-folder-items
-                                   (howm-view-title-regexp-grep) f)
-                                  (list item)))))
+                            (or (howm-view-search-folder-items-fi
+                                 (howm-view-title-regexp-grep) (list item))
+                                (list item))))
                         item-list))
   (let* ((alist (howm-item-list-rangeset reference-item-list))
          (matcher (lambda (item)
@@ -1160,7 +1152,9 @@ list of items in ITEM-LIST which do not satisfy the above condition."
   (when (string-match howm-view-title-skip-regexp (howm-item-summary item))
     (let ((title-line (with-temp-buffer
                         (howm-page-insert (howm-item-page item))
-                        (howm-view-set-place (howm-item-place item))
+                        (howm-view-set-place (or (howm-item-place item)
+                                                 (howm-view-get-place
+                                                  (point-min))))
                         (howm-view-get-title-line))))
       (howm-item-set-summary item title-line))))
 
@@ -1234,6 +1228,12 @@ list of items in ITEM-LIST which do not satisfy the above condition."
                                                 file place content))))
           found)
     found))
+
+;; sorry for confusing functions...
+
+(defun howm-view-search-folder-items-fi (regexp item-list &rest args)
+  (apply #'howm-view-search-folder-items
+         regexp (howm-make-folder-from-items item-list) args))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; sort

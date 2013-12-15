@@ -1,3 +1,48 @@
+2011-01-01  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* README.ja.rd: support new commands.
+
+	* README.ja.rd: move old changelogs to OLD.rd
+
+2010-12-31  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* README.ja.rd: update 2ch URL. add customization examples.
+
+	* OLD.rd: ditto.
+
+	* index-j.html: delete obsolete links.
+
+	* index.html: ditto.
+
+2010-12-30  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* index-j.html: add link to QFixHowm.
+
+2010-12-29  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* README.ja.rd: update obsolete descriptions.
+
+	* OLD.rd: ditto.
+
+2009-07-23  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* README.ja.rd: update table of contents.
+
+2009-05-02  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* index-j.html: fix link.
+
+2009-01-01  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
+
+	* README.ja.rd:
+	add summary-match-string.
+	delete emacs19.
+	link to howm-helper.
+	remove "todo" and "bug" sections.
+	update URLs.
+
+	* index-j.html: link to howm-helper
+
 2008-12-30  HIRAOKA Kazuyuki  <khi@users.sourceforge.jp>
 
 	* index-j.html: delete debian package

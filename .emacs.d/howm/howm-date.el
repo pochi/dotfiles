@@ -1,7 +1,7 @@
 ;;; howm-date.el --- Wiki-like note-taking tool
-;;; Copyright (c) 2002, 2003, 2004, 2005, 2006, 2007, 2008
-;;;   by HIRAOKA Kazuyuki <khi@users.sourceforge.jp>
-;;; $Id: howm-date.el,v 1.30 2008-07-10 13:34:44 hira Exp $
+;;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012
+;;;   HIRAOKA Kazuyuki <khi@users.sourceforge.jp>
+;;; $Id: howm-date.el,v 1.35 2011-12-31 15:07:29 hira Exp $
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@
      ((string-match "^~\\([0-9]+\\)$" c)
       (howm-action-lock-date-repeat (match-string-no-properties 1 c) date))
      ((string-match "^[.]$" c)
-      (howm-action-lock-date-set (format-time-string "%Y%m%d") date))
+      (howm-datestr-replace (howm-time-to-datestr)))
      ((and (string-match "^[-+~]$" c) pass-through)
       (insert c))
      (t (error (format "Can't understand %s." c))))))
@@ -141,6 +141,10 @@
          (d (third ymd)))
     (encode-time 0 0 0 d m y)))
 
+(defun howm-time-to-datestr (&optional time)
+  (let ((x (decode-time time)))
+    (howm-make-datestr (nth 5 x) (nth 4 x) (nth 3 x))))
+
 (defun howm-datestr-day-of-week (date)
   (format-time-string "%a" (howm-datestr-to-time date)))
 
@@ -169,17 +173,17 @@
        (setq ys "2000"))
      (let* ((given-ymd (mapcar #'string-to-number (list ys ms ds)))
             (carry nil) ;; to force future date
-            (dmy (mapcar* (lambda (ox nx)
-                         (when future-p
-                           (when (and carry (= nx 0))
-                             (setq ox (+ ox 1)))
-                           (setq carry
-                                 (cond ((= nx 0) nil)
-                                       ((= nx ox) carry)
-                                       ((< nx ox) t)
-                                       (t nil))))
-                         (if (= nx 0) ox nx))
-                       (reverse base-ymd) (reverse given-ymd)))
+            (dmy (howm-cl-mapcar* (lambda (ox nx)
+                                    (when future-p
+                                      (when (and carry (= nx 0))
+                                        (setq ox (+ ox 1)))
+                                      (setq carry
+                                            (cond ((= nx 0) nil)
+                                                  ((= nx ox) carry)
+                                                  ((< nx ox) t)
+                                                  (t nil))))
+                                    (if (= nx 0) ox nx))
+                                  (reverse base-ymd) (reverse given-ymd)))
          (d (car dmy))
          (m (second dmy))
          (y (third dmy)))

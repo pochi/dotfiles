@@ -1,5 +1,5 @@
 # shamelessly copied from navi2ch-cvs-0.0.20031209
-# $Id: Makefile.am,v 1.22 2007-05-04 19:30:06 hira Exp $
+# $Id: Makefile.am,v 1.23 2010-12-31 12:12:48 hira Exp $
 
 howm_LISP = \
 	howm.el \
@@ -30,7 +30,7 @@ EXTRA_DIST = Makefile.old bcomp.el howm-mkmenu.el $(howm_LISP) \
 BUILT_SOURCES = $(srcdir)/howm-version.el $(srcdir)/bcomp.el
 SUBDIRS = doc ext en ja sample
 
-MENU_SRC = en/0000-00-00-000000.howm ja/0000-00-00-000000.howm
+MENU_SRC = en/0000-00-00-000000.txt ja/0000-00-00-000000.txt
 MENU_EL = $(srcdir)/howm-menu-en.el $(srcdir)/howm-menu-ja.el
 TEST_INIT = sample/dot.emacs
 

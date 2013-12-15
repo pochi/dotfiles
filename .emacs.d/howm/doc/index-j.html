@@ -18,13 +18,11 @@ Emacs で断片的なメモをどんどんとるための環境です.
 
 <ul>
  <li> ダウンロード:
-      <a href="http://howm.sourceforge.jp/a/howm-1.3.7.tar.gz">howm-1.3.7.tar.gz</a>
-      (<a href="README-j.html#label-20">更新記録</a>)
-      [2008-12-31]
+      <a href="http://howm.sourceforge.jp/a/howm-1.4.1.tar.gz">1.4.1</a>
+      (<a href="README-j.html#label-18">更新記録</a>)
+      [2012-12-27]
       <ul>
-<!--
-       <li> 1.3.4 から夏時間のバグを直しました (→ <a href="http://howm.sourceforge.jp/a/howm-1.3.4_DST.patch">patch for 1.3.4</a> [2007-11-09])
--->
+       <li> emacs24 対応済 (→ <a href="http://howm.sourceforge.jp/a/howm-1.4.0rc1-emacs24.patch">該当箇所の patch</a> [2012-08-16])
 <!--
        <li> → <a href="http://howm.sourceforge.jp/cgi-bin/hiki/hiki.cgi?Package">パッケージ</a>
 -->
@@ -38,9 +36,7 @@ Emacs で断片的なメモをどんどんとるための環境です.
       /
       → いろいろ(<a href="http://howm.sourceforge.jp/cgi-bin/hiki/hiki.cgi">howm wiki</a>)
       <ul>
-       <li> → もっとていねいな
-            <a href="http://briefcase.yahoo.co.jp/karaage_dayomon">解説</a>
-            /
+       <li> →
             <a href="http://www.bookshelf.jp/cgi-bin/goto.cgi?file=meadow&node=howm">Meadow memo での紹介</a>
       </ul>
  <li> (
@@ -51,20 +47,17 @@ Emacs で断片的なメモをどんどんとるための環境です.
       <hr>
 <!--
  <li> リリース予定版
-      <a href="http://howm.sourceforge.jp/a/howm-1.3.7rc4.tar.gz">1.3.7rc4</a>
-      (<a href="README-test-j.html#label-20">更新記録</a>)
-      [2008-11-05]
+      <a href="http://howm.sourceforge.jp/a/howm-1.4.0rc2.tar.gz">1.4.0rc2</a>
+      (<a href="README-test-j.html#label-18">更新記録</a>)
+      : emacs24 でのエラーを修正 [2012-02-18]
 -->
 <!--
  <li> <a href="http://howm.sourceforge.jp/a/howm-test.tar.gz">テスト版</a>
-      (<a href="README-test-j.html#label-20">更新記録</a>)
-      :
-      カテゴリ別 todo list
-      [2008-08-05]
-      (念のため<a href="http://howm.sourceforge.jp/a/howm-test080531.tar.gz">前版</a>も置いておきます)
+      (<a href="README-test-j.html#label-18">更新記録</a>)
+      : ~/.howm-keys の自動再生成 [2012-09-23]
 -->
  <li> 旧版:
-      <a href="http://howm.sourceforge.jp/a/howm-1.3.6.tar.gz">1.3.6</a>
+      <a href="http://howm.sourceforge.jp/a/howm-1.3.9.2.tar.gz">1.3.9.2</a>
       /
       <a href="http://howm.sourceforge.jp/a/howm-1.3.2.tar.gz">1.3.2</a>
       /
@@ -82,11 +75,17 @@ Emacs で断片的なメモをどんどんとるための環境です.
  <li>移植
       <ul>
        <li> vim:
-            <a href="http://sworddancer.funkyboy.jp/howm_vim/">→ howm-mode.vim</a>
+            <a href="http://sites.google.com/site/fudist/Home/qfixhowm">→ QFixHowm</a>
+            (fuenor さん)
+            ／
+            <a href="http://sworddancer.funkyboy.jp/howm_vim/">howm-mode.vim</a>
             (七島さん)
        <li> xyzzy:
             <a href="http://homepage3.nifty.com/~ko-ji/">→ howm-wrap</a>
             (kimura さん)
+            ／
+            <a href="http://www.geocities.co.jp/Milano-Cat/2067/howm-init.html">howm-helper</a>
+            (deecay さん)
        <li> 秀丸:
             <a href="http://mrm.seesaa.net/category/789739.html">→ howm.mac</a>
             (Mr.M さん)
@@ -110,8 +109,6 @@ Emacs で断片的なメモをどんどんとるための環境です.
 …開発中</a><br>
 -->
 <br>
-※ 謎のタイトルバーについては
-<a href="http://howm.sourceforge.jp/a/rich-title/">こちら</a>
 
 <h3>次のように書くだけでリンク</h3>
 <ul>
@@ -138,7 +135,7 @@ Emacs で断片的なメモをどんどんとるための環境です.
 <img src="come.png" alt="come-from link">
 
 <h3>全文検索をフル活用</h3>
-<ul>            
+<ul>
  <li> 上の文字列リンクも, 実は全文検索のショートカット
  <li> ヒットしたファイルを全部つなげて表示する機能
       (→ 断片的メモをばんばんとって OK)
@@ -275,20 +272,20 @@ Emacs で断片的なメモをどんどんとるための環境です.
       <dl>
        <dt> フォーマット機能なし
        <dd> rd-mode なりなんなり, お好みの環境と組み合わせて<br>
-	    (minor-mode として実装)
+            (minor-mode として実装)
        <dt> WikiName なし
        <dd> 「リスト」という題名があれば, 「アリストテレス」でもリンクに<br>
-	    (予定外リンクもまた楽し)
+            (予定外リンクもまた楽し)
        <dt> データベースなし
        <dd> ディレクトリを毎回スキャン<br>
-	    (気軽に導入, 気軽に廃止)
+            (気軽に導入, 気軽に廃止)
       </dl>
 </ul>
 -->
 
 <hr>
-$Id: index-j.html,v 1.244 2008-12-30 15:13:47 hira Exp $<br>
+$Id: index-j.html,v 1.275 2012-12-27 03:20:12 hira Exp $<br>
 email アドレスはソースファイル冒頭を参照ください
 <!-- 作者◆IsNd58WHgU -->
-<a href="http://sourceforge.jp/"><img src="http://sourceforge.jp/sflogo.php?group_id=913" width="96" height="31" border="0" alt="SourceForge.jp"></a> 
+<a href="http://sourceforge.jp/"><img src="http://sourceforge.jp/sflogo.php?group_id=913" width="96" height="31" border="0" alt="SourceForge.jp"></a>
 </body> </html>

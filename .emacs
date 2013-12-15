@@ -18,11 +18,6 @@
        )
        ))
 
-;; MacのCopy/Paste
-(setq x-select-enable-clipboard t)
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
-
-
 ;; 日本語設定設定
 ;; http://d.hatena.ne.jp/SISY/searchdiary?word=*[emacs]
 (set-language-environment "Japanese")
@@ -43,6 +38,39 @@
 ;; http://www.bookshelf.jp/soft/meadow_42.html#SEC632
 (show-paren-mode t)
 (setq show-paren-style 'mixed)
+
+;; Cocoa-init
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(cperl-array-face ((t (:foreground "yellow" :weight normal))))
+ '(cperl-hash-face ((t (:foreground "Red" :slant normal :weight normal))))
+ '(mode-line ((t (:background "#aed700" :foreground "black" :box nil))))
+ '(mode-line-highlight ((t (:box nil))))
+ '(mode-line-inactive ((t (:inherit mode-line :background "#202020" :foreground "#d2d2d2" :box nil :weight light))))
+ '(secondary-selection ((t (:background "DeepSkyBlue4")))))
+
+;; tool-bar off
+(tool-bar-mode 0)
+
+;; scroll-bar off
+(scroll-bar-mode 0)
+
+(set-face-attribute 'default nil
+                    :family "Ricty" :height 160)
+
+;; バックアップしない
+(setq make-backup-files nil)
+
+;;; done unknown emacs
 
 ;; スタートアップ時のメッセージを抑制
 (setq inhibit-startup-message t)
@@ -130,9 +158,10 @@
 ;; color-theme
 ;; ------------------------------
 (add-to-load-path-recompile "~/.emacs.d/color-theme")
-(require 'color-theme)
-(color-theme-initialize)
-(color-theme-robin-hood)
+(require 'me-theme)
+;;(require 'color-theme)
+;;(color-theme-initialize)
+;;(color-theme-robin-hood)
 
 ;; yasnippet
 (add-to-load-path-recompile "~/.emacs.d/yasnippet-0.5.10")
@@ -243,14 +272,6 @@
 ;; git
 ;; ------------------------------
 
-;; git-emacs
-;; http://d.hatena.ne.jp/xcezx/20080425/1209081657
-;; http://tsgates.cafe24.com/git/git-emacs.html
-;; (setq load-path (cons (expand-file-name "~/.emacs.d/git-emacs") load-path))
-;; (require 'vc-git)
-
-;; (require 'git-emacs)
-
 ;; magit http://gitorious.org/projects/magit/repos/mainline
 (add-to-load-path-recompile "~/.emacs.d/magit")
 (require 'magit)
@@ -268,37 +289,52 @@
 ;; howm
 (add-to-list 'load-path "~/.emacs.d/howm")
 (require 'howm-mode)
+
 (setq howm-menu-lang 'ja)
 (global-set-key "\C-c,," 'howm-menu)
+
+(setq howm-directory "~/Dropbox/howm")
+
+(setq howm-view-title-header "*")
+(setq howm-file-name-format "%Y/%m/%Y-%m-%d.org")
+
+(define-key global-map (kbd "C-x C-z") nil)
+(define-key global-map (kbd "C-x C-z ,") 'howm-menu)
+(setq howm-prefix (kbd "C-x C-z"))
+
+(autoload 'howm-menu "howm-mode" "Hitori Otegaru Wiki Modoki" t)
+
+(add-hook 'org-mode-hook 'howm-mode)
+
 ;; (autoload 'howm-menu "howm-mode" "Hitori Otegaru Wiki Modoki" t)
 
 ;; matodo
-(require 'matodo-mode)
+;; (require 'matodo-mode)
 
-;; http://openlab.dino.co.jp/2008/07/15/233005294.html
-;; Show tab, zenkaku-space, white spaces at end of line
-;; http://www.bookshelf.jp/soft/meadow_26.html#SEC317
-(defface my-face-tab         '((t (:background "Yellow"))) nil :group 'my-faces)
-(defface my-face-zenkaku-spc '((t (:background "LightBlue"))) nil :group 'my-faces)
-(defface my-face-spc-at-eol  '((t (:foreground "Red" :underline t))) nil :group 'my-faces)
-(defvar my-face-tab         'my-face-tab)
-(defvar my-face-zenkaku-spc 'my-face-zenkaku-spc)
-(defvar my-face-spc-at-eol  'my-face-spc-at-eol)
-(defadvice font-lock-mode (before my-font-lock-mode ())
-  (font-lock-add-keywords
-   major-mode
-   '(("\t" 0 my-face-tab append)
-     ("　" 0 my-face-zenkaku-spc append)
-     ("[ \t]+$" 0 my-face-spc-at-eol append)
-     )))
-(ad-enable-advice 'font-lock-mode 'before 'my-font-lock-mode)
-(ad-activate 'font-lock-mode)
-;; settings for text file
-(add-hook 'ruby-mode-hook
-          '(lambda ()
-             (progn
-               (font-lock-mode t)
-               (font-lock-fontify-buffer))))
+;; ;; http://openlab.dino.co.jp/2008/07/15/233005294.html
+;; ;; Show tab, zenkaku-space, white spaces at end of line
+;; ;; http://www.bookshelf.jp/soft/meadow_26.html#SEC317
+;; (defface my-face-tab         '((t (:background "Yellow"))) nil :group 'my-faces)
+;; (defface my-face-zenkaku-spc '((t (:background "LightBlue"))) nil :group 'my-faces)
+;; (defface my-face-spc-at-eol  '((t (:foreground "Red" :underline t))) nil :group 'my-faces)
+;; (defvar my-face-tab         'my-face-tab)
+;; (defvar my-face-zenkaku-spc 'my-face-zenkaku-spc)
+;; (defvar my-face-spc-at-eol  'my-face-spc-at-eol)
+;; (defadvice font-lock-mode (before my-font-lock-mode ())
+;;   (font-lock-add-keywords
+;;    major-mode
+;;    '(("\t" 0 my-face-tab append)
+;;      ("　" 0 my-face-zenkaku-spc append)
+;;      ("[ \t]+$" 0 my-face-spc-at-eol append)
+;;      )))
+;; (ad-enable-advice 'font-lock-mode 'before 'my-font-lock-mode)
+;; (ad-activate 'font-lock-mode)
+;; ;; settings for text file
+;; (add-hook 'ruby-mode-hook
+;;           '(lambda ()
+;;              (progn
+;;                (font-lock-mode t)
+;;                (font-lock-fontify-buffer))))
 
 ;; ------------------------------
 ;; ruby
@@ -431,6 +467,7 @@
 (require 'anything-config)
 (require 'anything)
 (setq anything-idle-delay 0.3)
+(setq anything-quick-update t)
 (setq anything-input-idle-delay 0)
 (setq anything-candidate-number-limit 100)
 (require 'anything-c-mx)
@@ -507,6 +544,9 @@
 (add-to-list 'auto-mode-alist '("\\-test.js$" . buster-mode))
 
 
+(require 'elixir-mode)
+(add-to-list 'auto-mode-alist '("\\.ex$" . elixir-mode))
+
 (require 'auto-complete)
 (global-auto-complete-mode t)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
@@ -523,8 +563,6 @@
              (add-to-list 'ac-sources 'ac-source-rsense-constant)
              ;; C-x .で補完出来るようキーを設定
              (define-key ruby-mode-map (kbd "C-x .") 'ac-complete-rsense)))
-
-
 
 (require 'web-mode)
 
@@ -547,7 +585,47 @@
   (setq web-mode-asp-offset    2))
 (add-hook 'web-mode-hook 'web-mode-hook)
 
-;;; Elixir
-(require 'elixir-mode)
-(add-to-list 'auto-mode-alist '("\\.elixir$"     . elixir-mode))
 
+;; zencoding-mode
+(require 'zencoding-mode)
+(add-hook 'sgml-mode-hook 'zencoding-mode)
+(define-key zencoding-mode-keymap (kbd "C-i") 'zencoding-expand-line)
+
+;; haskell-mode
+(add-to-load-path-recompile "~/.emacs.d/haskell-mode-2.8.0")
+(require 'haskell-mode)
+(require 'haskell-cabal)
+(add-to-list 'auto-mode-alist '("\\.hs$" . haskell-mode))
+
+(require 'go-mode)
+(require 'go-mode-load)
+(add-to-list 'auto-mode-alist '("\\.go$" . go-mode))
+(defun my-go-mode-hook ()
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  (setq tab-width 2 indent-tabs-mode 1))
+(add-hook 'go-mode-hook 'my-go-mode-hook)
+
+;; helm config
+(add-to-list 'load-path "~/.emacs.d/helm")
+(require 'helm-config)
+(global-set-key (kbd "C-c h") 'helm-mini)
+(helm-mode 1)
+
+;; powerline.el
+(require 'powerline)
+(make-face 'mode-line-color-1)
+(custom-set-faces
+ '(mode-line ((t (:foreground "#030303" :background "#bdbdbd" :box nil))))
+ '(mode-line-inactive ((t (:foreground "#f9f9f9" :background "#666666" :box nil)))))
+(setq powerline-color1 "grey22")
+(setq powerline-color2 "grey40")
+
+;; indent-completion
+(add-to-load-path-recompile "~/.emacs.d/highlight")
+(require 'highlight-indentation)
+(setq highlight-indentation-offset 2)
+(set-face-background 'highlight-indentation-face "#e3e3d3")
+(set-face-background 'highlight-indentation-current-column-face "#e3e3d3")
+
+;; (add-hook 'ruby-mode-hook 'highlight-indentation-current-column-mode)
+;; (add-hook 'go-mode-hook 'highlight-indentation-current-column-mode)
